@@ -144,6 +144,26 @@ input,select{width:100%;padding:13px 12px;border:1px solid #354338;background:#0
 .confetti-piece{position:absolute;top:-18px;width:8px;height:13px;border-radius:2px;opacity:0;animation:confettiFall var(--fall,2.4s) cubic-bezier(.15,.65,.35,1) forwards;animation-delay:var(--delay,0s);box-shadow:0 0 9px currentColor}
 @keyframes confettiFall{0%{transform:translate3d(0,-15px,0) rotate(0deg);opacity:1}75%{opacity:1}100%{transform:translate3d(var(--drift,30px),105vh,0) rotate(850deg);opacity:0}}
 
+
+/* Feinschliff: Album bleibt ruhig; Karten-Reveal erst nach Antippen */
+#total,#unique,#dupes,#myth,.stats .stat b{
+  color:#b6ff00!important;-webkit-text-fill-color:#b6ff00!important;
+  text-shadow:0 0 7px #b6ff00,0 0 18px #b6ff0080!important;
+  opacity:1!important;visibility:visible!important;
+}
+.card-topline span:last-child{
+  color:#b6ff00!important;-webkit-text-fill-color:#b6ff00!important;
+  font-size:9px!important;font-weight:1000!important;
+  text-shadow:0 0 7px #b6ff00,0 0 15px #b6ff0080!important;
+}
+.stack-button .stack-peek{display:none!important}
+.card-viewer.show .viewer-card{animation:cardRevealOnTap .72s cubic-bezier(.16,1,.3,1) both}
+@keyframes cardRevealOnTap{
+  0%{opacity:0;transform:translateY(42px) scale(.78) rotateY(-22deg);filter:brightness(.35) blur(5px)}
+  58%{opacity:1;transform:translateY(-7px) scale(1.035) rotateY(5deg);filter:brightness(1.2) blur(0)}
+  100%{opacity:1;transform:translateY(0) scale(1) rotateY(0);filter:brightness(1)}
+}
+
 </style></head>
 <body>
 <header><div class="brand"><span class="claw">爪</span><div>MONSTER <span>TRACKER</span></div></div><div class="avatar">M</div></header>
@@ -174,7 +194,7 @@ function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setT
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function rarityFor(){let n=Math.random()*100;for(const r of rarities){n-=r.chance;if(n<0)return r}return rarities[0]}
 function cardHTML(c){let r=rarities.find(x=>x.name===c.rarity)||rarities[0],img=c.photo||c.image||'',seed=String(c.id||c.name+'|'+c.date),design=[...seed].reduce((n,ch)=>n+ch.charCodeAt(0),0)%10,serial=String(cards.indexOf(c)+1).padStart(3,'0');return '<article class="card '+r.cls+' design-card-'+design+'" data-card-id="'+esc(c.id)+'"><div class="card-inner"><div class="card-topline"><span>MONSTER TCG</span><span>NO. '+serial+'</span></div><div class="card-titlebar"><strong>'+esc(c.name)+'</strong><span class="card-rarity-gem">✦</span></div><div class="card-art design-'+design+'"><span class="rarity-label">'+esc(r.name)+'</span>'+(img?'<img src="'+img+'" alt="'+esc(c.name)+'" onerror="this.style.display=\'none\'">':'<div class="fallback">爪</div>')+'<span class="card-stamp">ENERGY CREATURE</span><span class="holo-corner">✧</span></div><div class="card-stats"><span>RARITY <b>'+esc(r.name.toUpperCase())+'</b></span><span>VOLUME <b>'+(c.volume||'–')+' ML</b></span></div><div class="card-info"><strong>'+esc(c.brand||'UNKNOWN')+'</strong><div class="sub">MONSTER ENERGY ARCHIVE · '+new Date(c.date).toLocaleDateString('de-DE')+'</div></div><div class="card-bottomline"><span>MONSTER TRACKER</span><span>★ '+r.chance+'% DROP</span></div></div></article>'}
-function render(){const keys=new Set(cards.map(c=>c.brand+'|'+c.name));$('total').textContent=cards.length;$('unique').textContent=keys.size;$('dupes').textContent=cards.length-keys.size;$('myth').textContent=cards.filter(c=>c.rarity==='Mythisch').length;let sorted=[...cards].sort((a,b)=>b.date-a.date),q=($('search')?.value||'').toLowerCase(),list=sorted.filter(c=>(c.name+' '+c.brand).toLowerCase().includes(q));let ranked=list.slice().sort((a,b)=>rarities.findIndex(r=>r.name===b.rarity)-rarities.findIndex(r=>r.name===a.rarity)||b.date-a.date);$('album').innerHTML=ranked.length?'<section class="rarity-group all-cards-stack"><div class="rarity-heading"><span>GESAMTER KARTENSTAPEL</span><small>'+ranked.length+' KARTEN · BESTE ZUERST</small></div><button class="stack-button" data-open-rarity="__ALL__" aria-label="Gesamten Kartenstapel öffnen"><span class="stack-peek peek-left">'+ (ranked[1]?cardHTML(ranked[1]):'') +'</span><span class="stack-peek peek-right">'+ (ranked[2]?cardHTML(ranked[2]):'') +'</span><span class="stack-front">'+cardHTML(ranked[0])+'</span><span class="stack-count">'+ranked.length+'</span><span class="stack-hint">ANTIPPEN · VON DER BESTEN BIS ZUR HÄUFIGSTEN KARTE BLÄTTERN</span></button></section>':'<div class="empty">Noch keine Karten gesammelt.<br>Scanne deine erste Dose!</div>';$('recent').innerHTML=sorted.slice(0,3).map(cardHTML).join('')||'<div class="empty">Deine ersten Funde erscheinen hier.</div>';let rare=cards.slice().sort((a,b)=>rarities.findIndex(r=>r.name===b.rarity)-rarities.findIndex(r=>r.name===a.rarity))[0];$('rarest').innerHTML=rare?cardHTML(rare):'<div class="empty">Dein seltenster Fund wartet noch auf dich.</div>'}
+function render(){const keys=new Set(cards.map(c=>c.brand+'|'+c.name));$('total').textContent=cards.length;$('unique').textContent=keys.size;$('dupes').textContent=cards.length-keys.size;$('myth').textContent=cards.filter(c=>c.rarity==='Mythisch').length;let sorted=[...cards].sort((a,b)=>b.date-a.date),q=($('search')?.value||'').toLowerCase(),list=sorted.filter(c=>(c.name+' '+c.brand).toLowerCase().includes(q));let ranked=list.slice().sort((a,b)=>rarities.findIndex(r=>r.name===b.rarity)-rarities.findIndex(r=>r.name===a.rarity)||b.date-a.date);$('album').innerHTML=ranked.length?'<section class="rarity-group all-cards-stack"><div class="rarity-heading"><span>GESAMTER KARTENSTAPEL</span><small>'+ranked.length+' KARTEN · BESTE ZUERST</small></div><button class="stack-button" data-open-rarity="__ALL__" aria-label="Gesamten Kartenstapel öffnen"><span class="stack-front">'+cardHTML(ranked[0])+'</span><span class="stack-count">'+ranked.length+'</span><span class="stack-hint">ANTIPPEN · VON DER BESTEN BIS ZUR HÄUFIGSTEN KARTE BLÄTTERN</span></button></section>':'<div class="empty">Noch keine Karten gesammelt.<br>Scanne deine erste Dose!</div>';$('recent').innerHTML=sorted.slice(0,3).map(cardHTML).join('')||'<div class="empty">Deine ersten Funde erscheinen hier.</div>';let rare=cards.slice().sort((a,b)=>rarities.findIndex(r=>r.name===b.rarity)-rarities.findIndex(r=>r.name===a.rarity))[0];$('rarest').innerHTML=rare?cardHTML(rare):'<div class="empty">Dein seltenster Fund wartet noch auf dich.</div>'}
 function save(){try{localStorage.setItem('mt-cards',JSON.stringify(cards))}catch(e){toast('Speicher voll – Foto bitte kleiner aufnehmen.')}render()}
 $('search').oninput=render;
 let viewerCards=[],viewerIndex=0,viewerTouchX=0;
@@ -234,7 +254,7 @@ function showFriendCompare(p){let mine=new Set(cards.map(c=>(c.name+'|'+c.brand)
 $('scanFriend').onclick=()=>{friendScanMode=true;go('scan');$('status').textContent='Freundes-QR in das grüne Kamerafeld halten.';startScanner()};
 async function startScanner(){if(!window.ZXing){toast('Scanner-Bibliothek fehlt.');return}try{const hints=new Map();hints.set(ZXing.DecodeHintType.TRY_HARDER,true);hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.QR_CODE,ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,ZXing.BarcodeFormat.ITF]);scanner=new ZXing.BrowserMultiFormatReader(hints,140);await scanner.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}},$('video'),result=>{if(result){let t=result.getText();try{scanner?.reset()}catch{}scanner=null;if(friendScanMode){friendScanMode=false;importFriendQR(t)}else{$('barcode').value=t;lookup(t)}}});$('status').textContent='Kamera aktiv – QR-Code ins grüne Feld halten.'}catch(e){$('status').textContent='Kamera konnte nicht gestartet werden.';friendScanMode=false}}
 $('start').onclick=()=>{friendScanMode=false;startScanner()};
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=11').catch(()=>{});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=12').catch(()=>{});
 render();
 })();
 </script><script type="module">
