@@ -87,6 +87,6 @@ $('stop').onclick=()=>{try{scanner?.reset()}catch{}scanner=null;$('video').srcOb
 $('backup').onclick=()=>{let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(cards)],{type:'application/json'}));a.href=u;a.download='monster-tracker-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
 $('restore').onchange=async e=>{try{let data=JSON.parse(await e.target.files[0].text());if(Array.isArray(data)){cards.push(...data);save();toast('Backup importiert.')}}catch{toast('Backup-Datei ungültig.')}};
 $('clear').onclick=()=>{if(confirm('Wirklich alle Karten löschen?')){cards=[];save();toast('Sammlung gelöscht.')}};
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=4').catch(()=>{});render();
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=5').catch(()=>{});render();
 })();
 </script></body></html>
