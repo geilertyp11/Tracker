@@ -106,4 +106,10 @@ async function startScanner(){if(!window.ZXing){toast('Scanner-Bibliothek fehlt.
 $('start').onclick=async()=>{if(friendScanMode){startScanner();return}try{
 if(!window.ZXing)throw Error('Scanner-Bibliothek nicht geladen');.catch(()=>{});render();
 })();
-</script></body></html>
+</script><script type="module">
+try{
+ const {removeBackground}=await import('https://esm.sh/@imgly/background-removal@1.7.0');
+ window.removeCanBackground=async image=>removeBackground(image,{model:'small',output:{format:'image/png',quality:.9}});
+}catch(e){console.warn('KI-Freistellung konnte nicht geladen werden',e)}
+</script>
+</body></html>
