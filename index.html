@@ -103,8 +103,9 @@ function importFriendQR(raw){try{if(!raw.startsWith('MTFRIEND:'))throw Error('Da
 function showFriendCompare(p){let mine=new Set(cards.map(c=>(c.name+'|'+c.brand).toLowerCase())),theirs=p.c.map(x=>({name:x[0],brand:x[1],rarity:x[2],volume:x[3]})),common=theirs.filter(c=>mine.has((c.name+'|'+c.brand).toLowerCase()));$('friendCompare').innerHTML='<div class="friend-card"><b>'+esc(p.n)+'</b><p class="muted">'+theirs.length+' Karten · '+common.length+' davon habt ihr beide</p><b>Gemeinsame Karten</b><p class="muted">'+(common.length?common.map(c=>esc(c.name)+' ('+esc(c.rarity)+')').join('<br>'):'Noch keine gemeinsamen Karten.')+'</p><b>Sammlung des Freundes</b><p class="muted">'+theirs.map(c=>esc(c.name)+' · '+esc(c.rarity)).join('<br>')+'</p></div>';toast('Freundessammlung geladen.')}
 $('scanFriend').onclick=()=>{friendScanMode=true;go('scan');$('status').textContent='Freundes-QR in das grüne Kamerafeld halten.';startScanner()};
 async function startScanner(){if(!window.ZXing){toast('Scanner-Bibliothek fehlt.');return}try{const hints=new Map();hints.set(ZXing.DecodeHintType.TRY_HARDER,true);hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.QR_CODE,ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,ZXing.BarcodeFormat.ITF]);scanner=new ZXing.BrowserMultiFormatReader(hints,140);await scanner.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}},$('video'),result=>{if(result){let t=result.getText();try{scanner?.reset()}catch{}scanner=null;if(friendScanMode){friendScanMode=false;importFriendQR(t)}else{$('barcode').value=t;lookup(t)}}});$('status').textContent='Kamera aktiv – QR-Code ins grüne Feld halten.'}catch(e){$('status').textContent='Kamera konnte nicht gestartet werden.';friendScanMode=false}}
-$('start').onclick=async()=>{if(friendScanMode){startScanner();return}try{
-if(!window.ZXing)throw Error('Scanner-Bibliothek nicht geladen');.catch(()=>{});render();
+$('start').onclick=()=>{friendScanMode=false;startScanner()};
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=6').catch(()=>{});
+render();
 })();
 </script><script type="module">
 try{
