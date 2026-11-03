@@ -1,0 +1,9 @@
+{
+  "name": "Monster Tracker",
+  "short_name": "Monster",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080a0a",
+  "theme_color": "#090b0b"
+}
