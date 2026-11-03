@@ -44,6 +44,20 @@ input,select{width:100%;padding:13px 12px;border:1px solid #354338;background:#0
 #friendQR{display:flex;justify-content:center;align-items:center;padding:14px;background:white;border-radius:14px;min-height:180px;margin-top:12px}
 #friendQR img,#friendQR canvas{max-width:100%;height:auto}
 .friend-card{border:1px solid #354338;border-radius:12px;padding:12px;margin:8px 0;background:#0b120d}
+
+/* Sichtbare Sammlerkarten: stärkere Motive, Rahmen und Platz für das Dosenfoto */
+.card{background:linear-gradient(135deg,var(--rarity),#080b09 42%,var(--rarity));padding:3px;box-shadow:0 0 0 1px color-mix(in srgb,var(--rarity) 65%,transparent),0 8px 25px #000b,0 0 18px color-mix(in srgb,var(--rarity) 28%,transparent)}
+.card-inner{border:1px solid color-mix(in srgb,var(--rarity) 65%,#ffffff);background:#080d0a}
+.card-art{height:170px;background:radial-gradient(ellipse at 50% 50%,color-mix(in srgb,var(--rarity) 52%,#111a13),#080b0d 72%);border-bottom:1px solid color-mix(in srgb,var(--rarity) 70%,transparent)}
+.card-art:before{font-size:clamp(125px,38vw,190px);opacity:.42;text-shadow:0 0 28px var(--rarity),0 0 70px var(--rarity)}
+.card-art:after{opacity:1;mix-blend-mode:screen}
+.card-art img{width:76%;height:82%;object-fit:contain;filter:drop-shadow(0 10px 12px #000d) drop-shadow(0 0 8px color-mix(in srgb,var(--rarity) 42%,transparent))}
+.card-art .fallback{position:relative;z-index:1;font-size:72px}
+.rarity-label{box-shadow:0 0 12px color-mix(in srgb,var(--rarity) 38%,transparent);background:#050906ed}
+.card-info{background:linear-gradient(180deg,color-mix(in srgb,var(--rarity) 13%,#101611),#0b100d)}
+.card-info strong{color:#fff}
+@media(min-width:620px){.card-art{height:195px}}
+
 </style></head>
 <body>
 <header><div class="brand"><span class="claw">爪</span><div>MONSTER <span>TRACKER</span></div></div><div class="avatar">M</div></header>
@@ -115,7 +129,7 @@ function showFriendCompare(p){let mine=new Set(cards.map(c=>(c.name+'|'+c.brand)
 $('scanFriend').onclick=()=>{friendScanMode=true;go('scan');$('status').textContent='Freundes-QR in das grüne Kamerafeld halten.';startScanner()};
 async function startScanner(){if(!window.ZXing){toast('Scanner-Bibliothek fehlt.');return}try{const hints=new Map();hints.set(ZXing.DecodeHintType.TRY_HARDER,true);hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.QR_CODE,ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,ZXing.BarcodeFormat.ITF]);scanner=new ZXing.BrowserMultiFormatReader(hints,140);await scanner.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}},$('video'),result=>{if(result){let t=result.getText();try{scanner?.reset()}catch{}scanner=null;if(friendScanMode){friendScanMode=false;importFriendQR(t)}else{$('barcode').value=t;lookup(t)}}});$('status').textContent='Kamera aktiv – QR-Code ins grüne Feld halten.'}catch(e){$('status').textContent='Kamera konnte nicht gestartet werden.';friendScanMode=false}}
 $('start').onclick=()=>{friendScanMode=false;startScanner()};
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=7').catch(()=>{});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=8').catch(()=>{});
 render();
 })();
 </script><script type="module">
