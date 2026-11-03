@@ -164,6 +164,21 @@ input,select{width:100%;padding:13px 12px;border:1px solid #354338;background:#0
   100%{opacity:1;transform:translateY(0) scale(1) rotateY(0);filter:brightness(1)}
 }
 
+
+/* Sammelheft: Kartenanzahl-Badge deutlich lesbar */
+.stack-button .stack-count{
+  color:#b6ff00!important;
+  -webkit-text-fill-color:#b6ff00!important;
+  background:#071008!important;
+  border:2px solid #b6ff00!important;
+  text-shadow:0 0 7px #b6ff00,0 0 15px #b6ff0090!important;
+  box-shadow:0 0 12px #b6ff0070,0 3px 12px #000c!important;
+  font-size:14px!important;
+  line-height:1.1!important;
+  min-width:34px!important;
+  opacity:1!important;
+}
+
 </style></head>
 <body>
 <header><div class="brand"><span class="claw">爪</span><div>MONSTER <span>TRACKER</span></div></div><div class="avatar">M</div></header>
@@ -254,7 +269,7 @@ function showFriendCompare(p){let mine=new Set(cards.map(c=>(c.name+'|'+c.brand)
 $('scanFriend').onclick=()=>{friendScanMode=true;go('scan');$('status').textContent='Freundes-QR in das grüne Kamerafeld halten.';startScanner()};
 async function startScanner(){if(!window.ZXing){toast('Scanner-Bibliothek fehlt.');return}try{const hints=new Map();hints.set(ZXing.DecodeHintType.TRY_HARDER,true);hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.QR_CODE,ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,ZXing.BarcodeFormat.ITF]);scanner=new ZXing.BrowserMultiFormatReader(hints,140);await scanner.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}},$('video'),result=>{if(result){let t=result.getText();try{scanner?.reset()}catch{}scanner=null;if(friendScanMode){friendScanMode=false;importFriendQR(t)}else{$('barcode').value=t;lookup(t)}}});$('status').textContent='Kamera aktiv – QR-Code ins grüne Feld halten.'}catch(e){$('status').textContent='Kamera konnte nicht gestartet werden.';friendScanMode=false}}
 $('start').onclick=()=>{friendScanMode=false;startScanner()};
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=12').catch(()=>{});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=13').catch(()=>{});
 render();
 })();
 </script><script type="module">
