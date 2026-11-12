@@ -264,6 +264,21 @@ input,select{width:100%;padding:13px 12px;border:1px solid #354338;background:#0
   transform:translate(-50%,-50%)!important;
 }
 
+
+/* Album-Fix v31: Bildfläche vollständig füllen, Dose über object-fit exakt zentrieren */
+#album .stack-front .card-art>img{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;height:100%!important;
+  min-width:0!important;min-height:0!important;
+  max-width:100%!important;max-height:100%!important;
+  margin:0!important;padding:0!important;
+  object-fit:contain!important;
+  object-position:50% 50%!important;
+  transform:none!important;
+}
+
 </style></head>
 <body>
 <header><div class="brand"><span class="claw">爪</span><div>MONSTER <span>TRACKER</span></div></div><div class="avatar">M</div></header>
@@ -362,7 +377,7 @@ function showFriendCompare(p){let mine=new Map();cards.forEach(c=>{let k=(String
 $('scanFriend').onclick=async()=>{try{try{scanner?.reset()}catch{}scanner=null;friendScanMode=true;go('scan');$('video').closest('.camera-stage').classList.add('qr-scan-mode');$('status').textContent='QR-Scanner wird vorbereitet …';await startScanner()}catch(e){console.error(e);$('status').textContent=e.message||'QR-Scanner konnte nicht gestartet werden.'}};
 async function startScanner(){try{await loadExternalScript(['https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js','https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js'],'ZXing');if(!navigator.mediaDevices?.getUserMedia)throw new Error('Kamera wird von diesem Browser nicht unterstützt. Bitte die HTTPS-Seite in Chrome oder Safari öffnen.');try{scanner?.reset()}catch{}const hints=new Map();hints.set(ZXing.DecodeHintType.TRY_HARDER,true);if(friendScanMode){hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.QR_CODE]);scanner=new ZXing.BrowserQRCodeReader(hints,180)}else{hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,ZXing.BarcodeFormat.ITF]);scanner=new ZXing.BrowserMultiFormatReader(hints,180)}let found=false;await scanner.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}},$('video'),result=>{if(result&&!found){found=true;const value=result.getText();try{scanner?.reset()}catch{}scanner=null;$('video').closest('.camera-stage').classList.remove('qr-scan-mode');if(friendScanMode){friendScanMode=false;importFriendQR(value)}else{$('barcode').value=value;$('status').textContent='Barcode erkannt: '+value;lookup(value)}}});$('status').textContent=friendScanMode?'QR-Scanner aktiv – Code vollständig und ruhig ins quadratische Feld halten.':'Kamera aktiv – Barcode ruhig ins grüne Feld halten.'}catch(e){console.error('Scanner:',e);friendScanMode=false;$('video').closest('.camera-stage').classList.remove('qr-scan-mode');throw new Error(e?.name==='NotAllowedError'?'Kamerazugriff verweigert. Bitte Browser-Kamerazugriff erlauben.':e?.name==='NotFoundError'?'Keine Kamera gefunden.':'Kamera konnte nicht gestartet werden: '+(e.message||'Bitte Browser neu laden.'))}}
 $('start').onclick=()=>{friendScanMode=false;$('video').closest('.camera-stage').classList.remove('qr-scan-mode');startScanner()};
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=30').catch(()=>{});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=31').catch(()=>{});
 initTrackerStorage().then(()=>render()).catch(()=>render());
 })();
 </script><script type="module">
